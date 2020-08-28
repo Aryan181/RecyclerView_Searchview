@@ -7,6 +7,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.location.Address;
 import android.location.Geocoder;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -30,19 +31,84 @@ public class MainActivity extends AppCompatActivity {
     private EditText editTextInsert;
     private EditText editTextRemove;
     String address;
+    private static final String TAG = "MyActivity";
+
+    ArrayList<String> co_ordinates ;
+
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        co_ordinates = new ArrayList<>();
+        co_ordinates.add("35.929673=-78.948237");
+        co_ordinates.add("38.889510=-77.032000");
+        co_ordinates.add("38.032120=-78.477510");
+        co_ordinates.add("36.379450=-75.830290");
+        co_ordinates.add("44.968046=-94.420307");
+        co_ordinates.add("33.844843=-116.54911");
+        co_ordinates.add("33.755783=-116.360066");
+        co_ordinates.add("33.844847=-116.549069");
+        co_ordinates.add("44.920474=-93.447851");
+
+
+
 
         createExampleList();
         buildRecyclerView();
 
         setButton();
 
+
+
     }
 
+    public String getAddress(String locations) {
+        Double latitude = Double.parseDouble(locations.substring(0,locations.indexOf('=')));
+        Double longitude = Double.parseDouble(locations.substring(locations.indexOf('=')+1));
+
+        Geocoder geocoder;
+        List<Address> addresses = null;
+        geocoder = new Geocoder(this, Locale.getDefault());
+
+        try {
+            addresses = geocoder.getFromLocation(latitude, longitude, 1); // Here 1 represent max location result to returned, by documents it recommended 1 to 5
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        String address = addresses.get(0).getAddressLine(0);
+        return address;
+    }
+
+
+    private String getCompleteAddressString(String locations) {
+        Double LATITUDE = Double.parseDouble(locations.substring(0,locations.indexOf('=')));
+        Double LONGITUDE = Double.parseDouble(locations.substring(locations.indexOf('=')+1));
+        String strAdd = "";
+        Geocoder geocoder = new Geocoder(this, Locale.getDefault());
+        try {
+            List<Address> addresses = geocoder.getFromLocation(LATITUDE, LONGITUDE, 1);
+            if (addresses != null) {
+                Address returnedAddress = addresses.get(0);
+                StringBuilder strReturnedAddress = new StringBuilder("");
+
+                for (int i = 0; i <= returnedAddress.getMaxAddressLineIndex(); i++) {
+                    strReturnedAddress.append(returnedAddress.getAddressLine(i)).append("\n");
+                }
+                strAdd = strReturnedAddress.toString();
+
+            } else {
+
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+
+        }
+        return strAdd;
+    }
 
 
     public void insertItem(int position)
@@ -71,35 +137,17 @@ public class MainActivity extends AppCompatActivity {
 
 
 
-     public ArrayList LatLon()
-     {
-
-         data.add("47519-122036");
-         data.add("41783-88168");
-         data.add("47622-122162");
-         return data;
-
-     }
-
-     public String addressGenerator(double latitude, double longitude) throws IOException {
-         Geocoder geocoder;
-         geocoder = new Geocoder(this, Locale.getDefault());
-
-         List<Address> addresses; // Here 1 represent max location result to returned, by documents it recommended 1 to 5
-         addresses = geocoder.getFromLocation(longitude, latitude, 1);
-
-         String address = addresses.get(0).getAddressLine(0);
-         return address;
-     }
 
 
-    public void createExampleList()
-    {
+
+
+
+    public void createExampleList() {
 
         mExampleList = new ArrayList<>();
-        mExampleList.add(new ExampleItem(R.drawable.ic_location, ""+Math.random()+""+Math.random(), ""+Math.random()));
-        mExampleList.add(new ExampleItem(R.drawable.ic_location, "Line 1", "Line 2"));
-        mExampleList.add(new ExampleItem(R.drawable.ic_location, "Line 1", "Line 2"));
+        for(int i =0;i<co_ordinates.size();i++) {
+            mExampleList.add(new ExampleItem(R.drawable.ic_location, ""+getCompleteAddressString(co_ordinates.get(i)) , "Co-ordinates = "+ co_ordinates.get(i).replace("="," ")));
+        }
 
 
        /* ArrayList<String> data = LatLon();
