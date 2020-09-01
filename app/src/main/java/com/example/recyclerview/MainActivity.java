@@ -29,6 +29,7 @@ public class MainActivity extends AppCompatActivity {
     private ArrayList<ExampleItem> mExampleList;
 
     ArrayList<String> data = new ArrayList<>();
+    private ArrayList<ExampleItem> filteredList;
     private RecyclerView mRecyclerView;
     private ExampleAdapter mAdapter;
     private RecyclerView.LayoutManager mLayoutManager;
@@ -99,7 +100,7 @@ public class MainActivity extends AppCompatActivity {
 
     private void filter ( String text)
     {
-        ArrayList<ExampleItem> filteredList = new ArrayList<>();
+        filteredList = new ArrayList<>();
         for (ExampleItem item : mExampleList)
         {
             if(item.getText1().toLowerCase().contains(text.toLowerCase())){
@@ -146,8 +147,10 @@ public class MainActivity extends AppCompatActivity {
 
     public void removeItem(int position)
     {
+        int pos = mExampleList.indexOf(filteredList.get(position));
         Log.e(TAG, "Item was clicked !");
-        mExampleList.remove(position);
+        mExampleList.remove(pos);
+        filteredList.remove(position);
         mAdapter.notifyItemRemoved(position);
 
 
@@ -211,7 +214,6 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onDeleteClick(int position) {
                 removeItem(position);
-
             }
         });
     }

@@ -24,6 +24,7 @@ import java.util.List;
 
 
 public class ExampleAdapter extends RecyclerView.Adapter<ExampleAdapter.ExampleViewHolder> implements Filterable {
+    public List<ExampleItem> filteredList;
     private List<ExampleItem> mExampleList;
     private OnItemClickListener mListener;
     private ArrayList<ExampleItem> mExampleListFull;
@@ -91,6 +92,8 @@ public class ExampleAdapter extends RecyclerView.Adapter<ExampleAdapter.ExampleV
                         if(position!=RecyclerView.NO_POSITION)
                         {
                             listener.onDeleteClick(position);
+                            Log.d(TAG,"Delete Button Clicked");
+
                         }
                     }
                 }
@@ -152,7 +155,7 @@ public class ExampleAdapter extends RecyclerView.Adapter<ExampleAdapter.ExampleV
     private Filter exampleFilter = new Filter() {
         @Override
         protected FilterResults performFiltering(CharSequence constraint) {
-            List<ExampleItem> filteredList = new ArrayList<>();
+            filteredList = new ArrayList<>();
             if (constraint == null || constraint.length() == 0) {
                 filteredList.addAll(mExampleListFull);
             } else {
@@ -186,13 +189,4 @@ public class ExampleAdapter extends RecyclerView.Adapter<ExampleAdapter.ExampleV
 
         }
     };
-    public void removeItem(int position)
-    {
-
-        mExampleList.remove(position);
-        Adapter.notifyItemRemoved(position);
-
-
-
-    }
 }
