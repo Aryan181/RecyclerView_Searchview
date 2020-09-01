@@ -1,13 +1,16 @@
 package com.example.recyclerview;
-
 import android.content.DialogInterface;
 import android.net.sip.SipSession;
 import android.text.Layout;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.Filter;
+import android.widget.Filterable;
 import android.widget.ImageView;
+import android.widget.ListAdapter;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -16,10 +19,27 @@ import androidx.recyclerview.widget.RecyclerView;
 import org.w3c.dom.Text;
 
 import java.util.ArrayList;
+import java.util.List;
 
-public class ExampleAdapter extends RecyclerView.Adapter<ExampleAdapter.ExampleViewHolder> {
-    private ArrayList<ExampleItem> mExampleList;
+
+
+public class ExampleAdapter extends RecyclerView.Adapter<ExampleAdapter.ExampleViewHolder> implements Filterable {
+    private List<ExampleItem> mExampleList;
     private OnItemClickListener mListener;
+    private ArrayList<ExampleItem> mExampleListFull;
+    private ExampleAdapter Adapter;
+    private static final String TAG = "MyActivity";
+
+
+    public void filterList(ArrayList<ExampleItem> filteredList) {
+
+
+
+
+        mExampleList = filteredList;
+        notifyDataSetChanged();
+    }
+
 
     public interface OnItemClickListener
     {
@@ -48,44 +68,51 @@ public class ExampleAdapter extends RecyclerView.Adapter<ExampleAdapter.ExampleV
             mDeleteImage = itemView.findViewById(R.id.image_delete);
 
 
-        itemView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if(listener != null)
-                {
-                    int position = getAdapterPosition();
-                    if(position!=RecyclerView.NO_POSITION)
+            itemView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    if(listener != null)
                     {
-                        listener.onItemClicked(position);
+                        int position = getAdapterPosition();
+                        if(position!=RecyclerView.NO_POSITION)
+                        {
+                            listener.onItemClicked(position);
+                        }
                     }
                 }
-            }
-        });
+            });
 
-        mDeleteImage.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if(listener != null)
-                {
-                    int position = getAdapterPosition();
-                    if(position!=RecyclerView.NO_POSITION)
+            mDeleteImage.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    if(listener != null)
                     {
-                        listener.onDeleteClick(position);
+                        int position = getAdapterPosition();
+                        if(position!=RecyclerView.NO_POSITION)
+                        {
+                            listener.onDeleteClick(position);
+                        }
                     }
                 }
-            }
-        });
+            });
 
 
 
         }
+
+
+
+
     }
 
-
-    public ExampleAdapter(ArrayList<ExampleItem> exampleList)
+    ExampleAdapter(List<ExampleItem> mExampleList)
     {
-        mExampleList = exampleList;
+        this.mExampleList = mExampleList;
+        mExampleListFull = new ArrayList<>(mExampleList);
     }
+
+
+
 
 
 
@@ -114,5 +141,58 @@ public class ExampleAdapter extends RecyclerView.Adapter<ExampleAdapter.ExampleV
     @Override
     public int getItemCount() {
         return mExampleList.size();
+    }
+
+
+
+    @Override
+    public Filter getFilter() {
+        return exampleFilter;
+    }
+    private Filter exampleFilter = new Filter() {
+        @Override
+        protected FilterResults performFiltering(CharSequence constraint) {
+            List<ExampleItem> filteredList = new ArrayList<>();
+            if (constraint == null || constraint.length() == 0) {
+                filteredList.addAll(mExampleListFull);
+            } else {
+                String filterPattern = constraint.toString().toLowerCase().trim();
+
+                for (ExampleItem item : mExampleListFull) {
+                    if (item.getText1().toLowerCase().contains(filterPattern)) {
+                        filteredList.add(item);
+                    }
+                }
+            }
+            FilterResults results = new FilterResults();
+            results.values = filteredList;
+            return results;
+        }
+
+        @Override
+        protected void publishResults(CharSequence charSequence, FilterResults results) {
+            mExampleList.clear();
+            mExampleList.addAll((List)results.values);
+
+            notifyDataSetChanged();
+
+
+
+
+
+
+
+
+
+        }
+    };
+    public void removeItem(int position)
+    {
+
+        mExampleList.remove(position);
+        Adapter.notifyItemRemoved(position);
+
+
+
     }
 }

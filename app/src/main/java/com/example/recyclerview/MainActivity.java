@@ -1,5 +1,4 @@
 package com.example.recyclerview;
-
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -7,16 +6,23 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.location.Address;
 import android.location.Geocoder;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.SearchView;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
-
+import androidx.appcompat.app.AppCompatActivity;
 import static com.example.recyclerview.R.drawable.ic_location;
 
 public class MainActivity extends AppCompatActivity {
@@ -43,16 +49,22 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         co_ordinates = new ArrayList<>();
-        co_ordinates.add("35.929673=-78.948237");
-        co_ordinates.add("38.889510=-77.032000");
-        co_ordinates.add("38.032120=-78.477510");
-        co_ordinates.add("36.379450=-75.830290");
-        co_ordinates.add("44.968046=-94.420307");
+
+
+
+
+
+        co_ordinates.add("35.929673=-78.948237+2020-03-25");
+        co_ordinates.add("38.889510=-77.032000+2019-01-27");
+        co_ordinates.add("38.032120=-78.477510+2020-02-26");
+        co_ordinates.add("36.379450=-75.830290+2020-02-26");
+
+        /*co_ordinates.add("44.968046=-94.420307");
         co_ordinates.add("33.844843=-116.54911");
         co_ordinates.add("33.755783=-116.360066");
         co_ordinates.add("33.844847=-116.549069");
-        co_ordinates.add("44.920474=-93.447851");
-
+        co_ordinates.add("44.920474=-93.447851");*/
+        Collections.sort(co_ordinates);
 
 
 
@@ -61,27 +73,47 @@ public class MainActivity extends AppCompatActivity {
 
         setButton();
 
+        EditText editText = findViewById(R.id.edittext);
 
+        editText.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+
+                filter(s.toString());
+            }
+        });
 
     }
 
-    public String getAddress(String locations) {
-        Double latitude = Double.parseDouble(locations.substring(0,locations.indexOf('=')));
-        Double longitude = Double.parseDouble(locations.substring(locations.indexOf('=')+1));
 
-        Geocoder geocoder;
-        List<Address> addresses = null;
-        geocoder = new Geocoder(this, Locale.getDefault());
 
-        try {
-            addresses = geocoder.getFromLocation(latitude, longitude, 1); // Here 1 represent max location result to returned, by documents it recommended 1 to 5
-        } catch (IOException e) {
-            e.printStackTrace();
+    private void filter ( String text)
+    {
+        ArrayList<ExampleItem> filteredList = new ArrayList<>();
+        for (ExampleItem item : mExampleList)
+        {
+            if(item.getText1().toLowerCase().contains(text.toLowerCase())){
+            filteredList.add(item);}
         }
 
-        String address = addresses.get(0).getAddressLine(0);
-        return address;
+        mAdapter.filterList(filteredList);
+
     }
+
+
+
+
+
 
 
     private String getCompleteAddressString(String locations) {
@@ -111,28 +143,23 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
-    public void insertItem(int position)
+
+    public void removeItem(int position)
     {
-        mExampleList.add(position,new ExampleItem(R.drawable.ic_audio,"New data inserted", "Extra edit"));
-        mAdapter.notifyItemChanged(position);
+        Log.e(TAG, "Item was clicked !");
+        mExampleList.remove(position);
+        mAdapter.notifyItemRemoved(position);
+
+
+
     }
 
-     public void removeItem(int position)
-     {
 
-         mExampleList.remove(position);
-         mAdapter.notifyItemChanged(position);
-
-
-
-     }
-
-
-     public void changeItem(int position, String text)
-     {
+    public void changeItem(int position, String text)
+    {
         mExampleList.get(position).changeText1(text);
         mAdapter.notifyItemChanged(position);
-     }
+    }
 
 
 
@@ -146,22 +173,19 @@ public class MainActivity extends AppCompatActivity {
 
         mExampleList = new ArrayList<>();
         for(int i =0;i<co_ordinates.size();i++) {
-            mExampleList.add(new ExampleItem(R.drawable.ic_location, ""+getCompleteAddressString(co_ordinates.get(i)) , "Co-ordinates = "+ co_ordinates.get(i).replace("="," ")));
+            mExampleList.add(new ExampleItem(R.drawable.ic_location, ""+getCompleteAddressString(co_ordinates.get(i).substring(0,co_ordinates.get(i).indexOf("+"))) , "Date visited  "+ co_ordinates.get(i).substring(co_ordinates.get(i).indexOf("+")+1)));
         }
 
+        /*mExampleList.add(new ExampleItem(R.drawable.ic_android, "One", "Ten"));
+        mExampleList.add(new ExampleItem(R.drawable.ic_audio, "Two", "Eleven"));
+        mExampleList.add(new ExampleItem(R.drawable.ic_sun, "Three", "Twelve"));
+        mExampleList.add(new ExampleItem(R.drawable.ic_android, "Four", "Thirteen"));
+        mExampleList.add(new ExampleItem(R.drawable.ic_audio, "Five", "Fourteen"));
+        mExampleList.add(new ExampleItem(R.drawable.ic_sun, "Six", "Fifteen"));
+        mExampleList.add(new ExampleItem(R.drawable.ic_android, "Seven", "Sixteen"));
+        mExampleList.add(new ExampleItem(R.drawable.ic_audio, "Eight", "Seventeen"));
+        mExampleList.add(new ExampleItem(R.drawable.ic_sun, "Nine", "Eighteen"));*/
 
-       /* ArrayList<String> data = LatLon();
-        for(int i = 0;i<data.size();i++)
-        {
-            Double Lat = Double.parseDouble(data.get(i).substring(0,data.get(i).indexOf('-')));
-            Double Lon = Double.parseDouble(data.get(i).substring(data.get(i).indexOf('-')+1));
-            try {
-                  address = addressGenerator(Lat, Lon);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-            mExampleList.add(new ExampleItem(R.drawable.ic_location, ""+address, Lat+" "+Lon));
-        }*/
 
     }
 
@@ -181,52 +205,21 @@ public class MainActivity extends AppCompatActivity {
         mAdapter.setOnItemClickListener(new ExampleAdapter.OnItemClickListener() {
             @Override
             public void onItemClicked(int position) {
-               changeItem(position, "Clicked");
+
             }
 
             @Override
             public void onDeleteClick(int position) {
                 removeItem(position);
+
             }
         });
     }
 
-        public void setButton()
-        {
-            /*buttonInsert = findViewById(R.id.button_insert);
-            buttonRemove = findViewById(R.id.button_remove);
-            editTextInsert = findViewById(R.id.edittext_insert);
-            editTextRemove = findViewById(R.id.edittext_remove);
+    public void setButton()
+    {
+
+    }
 
 
-            buttonInsert.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    int position = Integer.parseInt(editTextInsert.getText().toString());
-                    insertItem(position);
-                }
-            });
-
-
-
-            buttonRemove.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    // int position = Integer.parseInt(editTextRemove.getText().toString());
-                    //removeItem(position);
-
-                    int position;
-                    try {
-                        position = Integer.parseInt(editTextRemove.getText().toString());
-                        removeItem(position);
-                    } catch (NumberFormatException e) {
-
-                    }
-
-
-
-
-                }
-            });
-        }*/
-}}
+}
