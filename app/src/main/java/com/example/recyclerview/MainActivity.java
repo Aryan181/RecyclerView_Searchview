@@ -7,6 +7,7 @@ import android.location.Address;
 import android.location.Geocoder;
 import android.os.Bundle;
 import android.text.Editable;
+import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.util.Log;
 import android.view.Menu;
@@ -37,6 +38,7 @@ public class MainActivity extends AppCompatActivity {
     private Button buttonRemove;
     private EditText editTextInsert;
     private EditText editTextRemove;
+    private EditText editText;
     String address;
     private static final String TAG = "MyActivity";
 
@@ -74,7 +76,7 @@ public class MainActivity extends AppCompatActivity {
 
         setButton();
 
-        EditText editText = findViewById(R.id.edittext);
+        editText = findViewById(R.id.edittext);
 
         editText.addTextChangedListener(new TextWatcher() {
             @Override
@@ -147,7 +149,12 @@ public class MainActivity extends AppCompatActivity {
 
     public void removeItem(int position)
     {
-        int pos = mExampleList.indexOf(filteredList.get(position));
+        int pos;
+        if(TextUtils.isEmpty(editText.getText().toString())){
+            pos = position;
+        } else {
+            pos = mExampleList.indexOf(filteredList.get(position));
+        }
         Log.e(TAG, "Item was clicked !");
         mExampleList.remove(pos);
         filteredList.remove(position);
