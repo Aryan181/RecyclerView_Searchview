@@ -152,12 +152,13 @@ public class MainActivity extends AppCompatActivity {
         int pos;
         if(TextUtils.isEmpty(editText.getText().toString())){
             pos = position;
+            mExampleList.remove(pos);
         } else {
             pos = mExampleList.indexOf(filteredList.get(position));
+            mExampleList.remove(pos);
+            filteredList.remove(position);
         }
         Log.e(TAG, "Item was clicked !");
-        mExampleList.remove(pos);
-        filteredList.remove(position);
         mAdapter.notifyItemRemoved(position);
 
 
