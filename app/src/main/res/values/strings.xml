@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">RecyclerView</string>
+    <string name="mapbox_access_token">pk.eyJ1IjoibWFubnVhbCIsImEiOiJja2V1M3FjZmsyYWMzMnpzYWZtYjJ4NDBxIn0.6H8be4XW4AgFM6JpBLTqEQ</string>
 </resources>
