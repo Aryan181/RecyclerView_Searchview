@@ -42,70 +42,77 @@ public class MapViewActivity extends AppCompatActivity implements OnMapReadyCall
 
         mapView.getMapAsync(this);
     }
+
+
+
+
+
+    @Override
+    public void onMapReady(@NonNull MapboxMap mapboxMap) {
+        mapboxMap.setStyle(new Style.Builder().fromUri("mapbox://styles/mannual/ckfshfx61025g19o2ztxxtijy"),new Style.OnStyleLoaded(){
+
             @Override
-            public void onMapReady(@NonNull MapboxMap mapboxMap) {
-                MapViewActivity.this.mapboxMap = mapboxMap;
-                mapboxMap.setStyle(Style.MAPBOX_STREETS, new Style.OnStyleLoaded() {
-                    @Override
-                    public void onStyleLoaded(@NonNull Style style) {
+            public void onStyleLoaded(@NonNull Style style) {
 
-                        enableLocationComponent(style);
+                enableLocationComponent(style ,mapboxMap);
 
 
-                    }
-                });
             }
+        });
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
     @SuppressWarnings( {"MissingPermission"})
-    private void enableLocationComponent(@NonNull Style loadedMapStyle) {
-// Check if permissions are enabled and if not request
+    private void enableLocationComponent(Style style, MapboxMap mapboxMap) {
+
+        // Check if permissions are enabled and if not request
         if (PermissionsManager.areLocationPermissionsGranted(this)) {
 
-// Get an instance of the component
+            // Get an instance of the component
             LocationComponent locationComponent = mapboxMap.getLocationComponent();
 
-// Activate with options
-            locationComponent.activateLocationComponent(
-                    LocationComponentActivationOptions.builder(this, loadedMapStyle).build());
+            // Activate with a built LocationComponentActivationOptions object
+            locationComponent.activateLocationComponent(LocationComponentActivationOptions.builder(this, style).build());
 
-// Enable to make component visible
+            // Enable to make component visible
             locationComponent.setLocationComponentEnabled(true);
 
-// Set the component's camera mode
+            // Set the component's camera mode
             locationComponent.setCameraMode(CameraMode.TRACKING);
 
-// Set the component's render mode
+            // Set the component's render mode
             locationComponent.setRenderMode(RenderMode.COMPASS);
+
         } else {
+
             permissionsManager = new PermissionsManager(this);
+
             permissionsManager.requestLocationPermissions(this);
+
         }
     }
 
-    @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        permissionsManager.onRequestPermissionsResult(requestCode, permissions, grantResults);
-    }
 
-    @Override
-    public void onExplanationNeeded(List<String> permissionsToExplain) {
-        //Toast.makeText(this, R.string.user_location_permission_explanation, Toast.LENGTH_LONG).show();
-    }
 
-    @Override
-    public void onPermissionResult(boolean granted) {
-        if (granted) {
-            mapboxMap.getStyle(new Style.OnStyleLoaded() {
-                @Override
-                public void onStyleLoaded(@NonNull Style style) {
-                    enableLocationComponent(style);
-                }
-            });
-        } else {
-           // Toast.makeText(this, R.string.user_location_permission_not_granted, Toast.LENGTH_LONG).show();
-            finish();
-        }
-    }
+
+
+
 
     @Override
     protected void onSaveInstanceState(Bundle outState) {
@@ -155,4 +162,13 @@ public class MapViewActivity extends AppCompatActivity implements OnMapReadyCall
     }
 
 
+    @Override
+    public void onExplanationNeeded(List<String> permissionsToExplain) {
+
+    }
+
+    @Override
+    public void onPermissionResult(boolean granted) {
+
+    }
 }
