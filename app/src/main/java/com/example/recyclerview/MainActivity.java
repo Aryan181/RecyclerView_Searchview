@@ -53,6 +53,7 @@ public class MainActivity extends AppCompatActivity {
                 openMapViewActivity();
             }
         });
+
     }
 
     public void openListViewActivity() {
