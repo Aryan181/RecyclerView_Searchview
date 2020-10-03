@@ -51,6 +51,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 openMapViewActivity();
+                //openLocationComponentActivity();
             }
         });
 
@@ -65,6 +66,8 @@ public class MainActivity extends AppCompatActivity {
         Intent intent = new Intent(this, MapViewActivity.class);
         startActivity(intent);
     }
+
+    
 
 
 
