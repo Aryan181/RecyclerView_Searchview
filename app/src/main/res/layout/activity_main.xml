@@ -1,33 +1,75 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
+    android:background="@color/colorIndigo"
     tools:context="com.codinginflow.searchfunctionalityexample.MainActivity">
 
     <TextView
-        android:id="@+id/textView3"
-        android:layout_width="match_parent"
-        android:layout_height="236dp"
-        android:text="Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum." />
+        android:id="@+id/mainTextView"
+        android:layout_width="402dp"
+        android:layout_height="244dp"
+        android:fontFamily="@font/raleway"
+        android:paddingLeft="20dp"
+        android:paddingTop="40dp"
+        android:paddingRight="20dp"
+        android:text="@string/main_text_view_string"
+        android:textAppearance="@style/TextAppearance.AppCompat.Body1"
+        android:textColor="@color/colorWhite"
+        android:textSize="20sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
 
     <Button
         android:id="@+id/noEditButton"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="No. I'm Fine" />
+        android:layout_width="250dp"
+        android:layout_height="60dp"
+        android:layout_marginTop="19dp"
+        android:fontFamily="@font/raleway"
+        android:text="@string/no_button_string"
+        android:textAllCaps="false"
+        android:textColor="@color/colorWhite"
+        android:textSize="20sp"
+        android:background="@drawable/custom_no_button"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.503"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/mainTextView" />
 
     <Button
         android:id="@+id/yesEditListButton"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Show me data in a list" />
+        android:layout_width="250dp"
+        android:layout_height="60dp"
+        android:layout_marginTop="19dp"
+        android:fontFamily="@font/raleway"
+        android:text="@string/yes_button_list_string"
+        android:textAllCaps="false"
+        android:textColor="@color/colorIndigo"
+        android:textSize="20sp"
+        android:background="@drawable/custom_yes_button"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.496"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/noEditButton" />
 
     <Button
         android:id="@+id/yesEditMapButton"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Allow me to implement spatial privacy" />
-</LinearLayout>
+        android:layout_width="252dp"
+        android:layout_height="75dp"
+        android:layout_marginTop="19dp"
+        android:fontFamily="@font/raleway"
+        android:text="@string/yes_button_map_string"
+        android:textAllCaps="false"
+        android:textColor="@color/colorIndigo"
+        android:textSize="20sp"
+        android:background="@drawable/custom_yes_button"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.509"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/yesEditListButton" />
+</androidx.constraintlayout.widget.ConstraintLayout>

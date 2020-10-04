@@ -54,6 +54,7 @@ public class MainActivity extends AppCompatActivity {
                 //openLocationComponentActivity();
             }
         });
+
     }
 
     public void openListViewActivity() {
