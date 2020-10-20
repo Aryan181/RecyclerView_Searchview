@@ -5,7 +5,8 @@
     <string name="yes_button_list_string">Show me data in a list</string>
     <string name="yes_button_map_string">Allow me to implement spatial privacy</string>
     <string name="main_text_view_string">On the following screen, you will be prompted to share your
-        location data with a health official. You can choose to edit what location data health officials can access.
-        \n\nWould you like to edit your location data?
+        location data with health officials. You can choose to edit what location data health officials can access.
+        \n\nWould you like to edit the location data health officials have access to?
     </string>
+    <string name="click_on_map_instruction">Mark this point?</string>
 </resources>

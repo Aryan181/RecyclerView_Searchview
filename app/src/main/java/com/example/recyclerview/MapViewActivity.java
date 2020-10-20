@@ -16,10 +16,21 @@ import com.mapbox.mapboxsdk.maps.MapView;
 import com.mapbox.mapboxsdk.maps.MapboxMap;
 import com.mapbox.mapboxsdk.maps.OnMapReadyCallback;
 import com.mapbox.mapboxsdk.maps.Style;
+import com.mapbox.mapboxsdk.geometry.LatLng;
+import android.graphics.Color;
+import android.graphics.PointF;
+
+import android.widget.Toast;
+
+import com.mapbox.geojson.Feature;
+import com.mapbox.geojson.FeatureCollection;
+import com.mapbox.mapboxsdk.style.layers.FillLayer;
+import com.mapbox.mapboxsdk.style.layers.PropertyFactory;
+import com.mapbox.mapboxsdk.style.sources.GeoJsonSource;
 
 import java.util.List;
 
-public class MapViewActivity extends AppCompatActivity implements OnMapReadyCallback, PermissionsListener {
+public class MapViewActivity extends AppCompatActivity implements OnMapReadyCallback, PermissionsListener, MapboxMap.OnMapClickListener {
 
     private MapView mapView;
     private PermissionsManager permissionsManager;
@@ -39,44 +50,50 @@ public class MapViewActivity extends AppCompatActivity implements OnMapReadyCall
 
         mapView = findViewById(R.id.mapView);
         // mapView.onCreate(savedInstanceState);
-
         mapView.getMapAsync(this);
     }
 
 
-
-
-
     @Override
     public void onMapReady(@NonNull MapboxMap mapboxMap) {
-        mapboxMap.setStyle(new Style.Builder().fromUri("mapbox://styles/mannual/ckfshfx61025g19o2ztxxtijy"),new Style.OnStyleLoaded(){
 
+        MapViewActivity.this.mapboxMap = mapboxMap;
+        mapboxMap.setStyle(Style.MAPBOX_STREETS, new Style.OnStyleLoaded() {
             @Override
             public void onStyleLoaded(@NonNull Style style) {
 
-                enableLocationComponent(style ,mapboxMap);
+                enableLocationComponent(style, mapboxMap);
+                style.addSource(new GeoJsonSource("source-id"));
 
+                style.addLayer(new FillLayer("layer-id", "source-id").withProperties(
+                        PropertyFactory.fillColor(Color.parseColor("#8A8ACB"))
+                ));
+
+                mapboxMap.addOnMapClickListener(MapViewActivity.this);
+                Toast.makeText(MapViewActivity.this,
+                        getString(R.string.click_on_map_instruction), Toast.LENGTH_SHORT).show();
 
             }
         });
     }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+    @Override
+    public boolean onMapClick(@NonNull LatLng point) {
+        mapboxMap.getStyle(new Style.OnStyleLoaded() {
+            @Override
+            public void onStyleLoaded(@NonNull Style style) {
+                final PointF finalPoint = mapboxMap.getProjection().toScreenLocation(point);
+                List<Feature> features = mapboxMap.queryRenderedFeatures(finalPoint, "building");
+                if (features.size() > 0) {
+                    GeoJsonSource selectedBuildingSource = style.getSourceAs("source-id");
+                    if (selectedBuildingSource != null) {
+                        selectedBuildingSource.setGeoJson(FeatureCollection.fromFeatures(features));
+                    }
+                }
+            }
+        });
+        return true;
+    }
 
     @SuppressWarnings( {"MissingPermission"})
     private void enableLocationComponent(Style style, MapboxMap mapboxMap) {
@@ -107,12 +124,6 @@ public class MapViewActivity extends AppCompatActivity implements OnMapReadyCall
 
         }
     }
-
-
-
-
-
-
 
     @Override
     protected void onSaveInstanceState(Bundle outState) {
