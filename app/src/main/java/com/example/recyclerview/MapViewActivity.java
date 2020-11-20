@@ -1,5 +1,7 @@
 package com.example.recyclerview;
 
+
+
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -20,6 +22,7 @@ import com.mapbox.mapboxsdk.geometry.LatLng;
 import android.graphics.Color;
 import android.graphics.PointF;
 
+import android.util.Log;
 import android.widget.Toast;
 
 import com.mapbox.geojson.Feature;
@@ -28,6 +31,7 @@ import com.mapbox.mapboxsdk.style.layers.FillLayer;
 import com.mapbox.mapboxsdk.style.layers.PropertyFactory;
 import com.mapbox.mapboxsdk.style.sources.GeoJsonSource;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class MapViewActivity extends AppCompatActivity implements OnMapReadyCallback, PermissionsListener, MapboxMap.OnMapClickListener {
@@ -36,6 +40,10 @@ public class MapViewActivity extends AppCompatActivity implements OnMapReadyCall
     private PermissionsManager permissionsManager;
     private MapboxMap mapboxMap;
 
+    ArrayList<Coordinate> latlong = new ArrayList<Coordinate>();
+
+
+    private static final String TAG = "MyActivity";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,6 +59,7 @@ public class MapViewActivity extends AppCompatActivity implements OnMapReadyCall
         mapView = findViewById(R.id.mapView);
         // mapView.onCreate(savedInstanceState);
         mapView.getMapAsync(this);
+
     }
 
 
@@ -75,18 +84,47 @@ public class MapViewActivity extends AppCompatActivity implements OnMapReadyCall
 
             }
         });
+
+
+
+
     }
 
     @Override
     public boolean onMapClick(@NonNull LatLng point) {
+
         mapboxMap.getStyle(new Style.OnStyleLoaded() {
             @Override
             public void onStyleLoaded(@NonNull Style style) {
                 final PointF finalPoint = mapboxMap.getProjection().toScreenLocation(point);
+
+
+
+
+
+                Coordinate current_point = new Coordinate(""+point.getLatitude(),""+point.getLongitude());
+                latlong.add(current_point);
+
+                Toast.makeText(MapViewActivity.this, "Chosen location added for removal", Toast.LENGTH_SHORT).show();
+
+
+                Log.e(TAG, "Here's the current list =>");
+
+
+
+
+                for(int i = 0;i<latlong.size();i++) {
+                    Log.e(TAG, "" + latlong.get(i).getX()+" " + latlong.get(i).getY());
+
+                }
+
+
                 List<Feature> features = mapboxMap.queryRenderedFeatures(finalPoint, "building");
                 if (features.size() > 0) {
+
                     GeoJsonSource selectedBuildingSource = style.getSourceAs("source-id");
                     if (selectedBuildingSource != null) {
+
                         selectedBuildingSource.setGeoJson(FeatureCollection.fromFeatures(features));
                     }
                 }
