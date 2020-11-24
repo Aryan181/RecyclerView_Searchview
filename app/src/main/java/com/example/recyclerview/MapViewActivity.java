@@ -1,6 +1,47 @@
 package com.example.recyclerview;
 
 
+import android.graphics.BitmapFactory;
+import android.os.Bundle;
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
+import android.widget.TextView;
+import android.widget.Toast;
+
+import com.mapbox.android.core.permissions.PermissionsListener;
+import com.mapbox.android.core.permissions.PermissionsManager;
+import com.mapbox.api.tilequery.MapboxTilequery;
+//import com.mapbox.api.tilequery.MapboxTilequery;
+import com.mapbox.geojson.Feature;
+import com.mapbox.geojson.FeatureCollection;
+import com.mapbox.geojson.Point;
+import com.example.recyclerview.R;
+import com.mapbox.mapboxsdk.Mapbox;
+import com.mapbox.mapboxsdk.camera.CameraPosition;
+import com.mapbox.mapboxsdk.camera.CameraUpdateFactory;
+import com.mapbox.mapboxsdk.geometry.LatLng;
+import com.mapbox.mapboxsdk.location.LocationComponent;
+import com.mapbox.mapboxsdk.location.LocationComponentActivationOptions;
+import com.mapbox.mapboxsdk.location.modes.CameraMode;
+import com.mapbox.mapboxsdk.location.modes.RenderMode;
+import com.mapbox.mapboxsdk.maps.MapView;
+import com.mapbox.mapboxsdk.maps.MapboxMap;
+import com.mapbox.mapboxsdk.maps.OnMapReadyCallback;
+import com.mapbox.mapboxsdk.maps.Style;
+import com.mapbox.mapboxsdk.style.layers.SymbolLayer;
+import com.mapbox.mapboxsdk.style.sources.GeoJsonSource;
+
+import java.util.List;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+import timber.log.Timber;
+
+import static com.mapbox.mapboxsdk.style.layers.PropertyFactory.iconAllowOverlap;
+import static com.mapbox.mapboxsdk.style.layers.PropertyFactory.iconIgnorePlacement;
+import static com.mapbox.mapboxsdk.style.layers.PropertyFactory.iconImage;
+import static com.mapbox.mapboxsdk.style.layers.PropertyFactory.iconOffset;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -42,7 +83,7 @@ public class MapViewActivity extends AppCompatActivity implements OnMapReadyCall
 
     ArrayList<Coordinate> latlong = new ArrayList<Coordinate>();
 
-
+    private static final String RESULT_GEOJSON_SOURCE_ID = "RESULT_GEOJSON_SOURCE_ID";
     private static final String TAG = "MyActivity";
 
     @Override
@@ -91,7 +132,7 @@ public class MapViewActivity extends AppCompatActivity implements OnMapReadyCall
     }
 
     @Override
-    public boolean onMapClick(@NonNull LatLng point) {
+    public boolean onMapClick(@NonNull LatLng point ) {
 
         mapboxMap.getStyle(new Style.OnStyleLoaded() {
             @Override
@@ -103,6 +144,19 @@ public class MapViewActivity extends AppCompatActivity implements OnMapReadyCall
 
 
                 Coordinate current_point = new Coordinate(""+point.getLatitude(),""+point.getLongitude());
+
+
+
+
+
+
+               // makeTilequeryApiCall(point);
+
+
+
+
+
+
                 latlong.add(current_point);
 
                 Toast.makeText(MapViewActivity.this, "Chosen location added for removal", Toast.LENGTH_SHORT).show();
@@ -131,7 +185,87 @@ public class MapViewActivity extends AppCompatActivity implements OnMapReadyCall
             }
         });
         return true;
+
+
+
+
+
     }
+
+
+
+    private void makeTilequeryApiCall(@NonNull LatLng point) {
+        MapboxTilequery tilequery = MapboxTilequery.builder()
+                .accessToken(getString(R.string.mapbox_access_token))
+                .tilesetIds("mapbox.mapbox-streets-v7")
+                .query(Point.fromLngLat(point.getLongitude(), point.getLatitude()))
+                .radius(50)
+                .limit(10)
+                .geometry("polygon")
+                .dedupe(true)
+                .layers("building")
+                .build();
+
+
+        tilequery.enqueueCall(new Callback<FeatureCollection>() {
+
+
+                                 @Override
+                                  public void onResponse(Call<FeatureCollection> call, Response<FeatureCollection> response) {
+                                      if (response.body() != null) {
+                                          FeatureCollection responseFeatureCollection = response.body();
+                                          // tilequeryResponseTextView.setText(responseFeatureCollection.toJson());
+                                          Log.e(TAG, "" + responseFeatureCollection.toJson());
+                                      }
+                                  }
+
+            @Override
+            public void onFailure(Call<FeatureCollection> call, Throwable t) {
+
+            }
+
+        });
+}
+
+
+                    /*mapboxMap.getStyle(new Style.OnStyleLoaded() {
+                        @Override
+                        public void onStyleLoaded(@NonNull Style style) {
+                            GeoJsonSource resultSource = style.getSourceAs(RESULT_GEOJSON_SOURCE_ID);
+                             if (resultSource != null && responseFeatureCollection.features() != null) {
+                                List<Feature> featureList = responseFeatureCollection.features();
+
+
+                                if (featureList.isEmpty()) {
+                                    //Toast.makeText(TilequeryActivity.this,
+                                            //getString(R.string.no_tilequery_response_features_toast), Toast.LENGTH_SHORT).show();
+                                } else {
+                                    resultSource.setGeoJson(FeatureCollection.fromFeatures(featureList));
+                                    Log.e(TAG, "Here's the list compiled till now ");
+                                    Log.e(TAG, featureList.toString());
+
+                                }
+                            }
+                        }
+                    });
+                }
+            }
+
+            @Override
+            public void onFailure(Call<FeatureCollection> call, Throwable throwable) {
+                Timber.d("Request failed: %s", throwable.getMessage());
+                //Toast.makeText(TilequeryActivity.this, R.string.api_error, Toast.LENGTH_SHORT).show();
+            }
+        });
+
+
+            }
+
+*/
+
+
+
+
 
     @SuppressWarnings( {"MissingPermission"})
     private void enableLocationComponent(Style style, MapboxMap mapboxMap) {
